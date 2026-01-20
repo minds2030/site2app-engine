@@ -6,7 +6,7 @@
 	android:id="@+id/coordinator_layout"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:background="?android:attr/colorBackground"
+	android:background="#000000" 
 	tools:context=".MainActivity">
 
 	<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -16,7 +16,8 @@
 
 		<RelativeLayout
 			android:layout_width="match_parent"
-			android:layout_height="match_parent">
+			android:layout_height="match_parent"
+			android:background="#000000">
 
 			<WebView
 				android:id="@+id/msw_view"
@@ -35,13 +36,14 @@
 		</RelativeLayout>
 	</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-	<!-- Ad Container and Progress Bar -->
 	<LinearLayout
 		android:id="@+id/msw_ad_container"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_gravity="bottom"
+		android:visibility="gone"
 		android:orientation="vertical"/>
+
 	<ProgressBar
 		android:id="@+id/msw_progress"
 		style="?android:attr/progressBarStyleHorizontal"
