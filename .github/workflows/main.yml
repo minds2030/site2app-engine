@@ -1,8 +1,7 @@
 name: Build Site2App APK
 
 on:
-  repository_dispatch:
-    types: [build-android-app]
+  workflow_dispatch: # يسمح لك بتشغيله يدوياً من موقع جيت هب أيضاً
 
 jobs:
   build:
@@ -18,26 +17,6 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Advanced Cleanup & Configuration
-        run: |
-          # 1. مسح وإعادة بناء ملف الإعدادات لإلغاء ميزات صاحب الريبو تماماً
-          echo "app.url = ${{ github.event.client_payload.app_url }}" > app/src/main/assets/swv.properties
-          echo "feature.progressbar = true" >> app/src/main/assets/swv.properties
-          echo "feature.exit_confirmation = true" >> app/src/main/assets/swv.properties
-          
-          # إيقاف العناصر المزعجة التي ظهرت في صورك
-          echo "layout.drawer = false" >> app/src/main/assets/swv.properties
-          echo "layout.floating_button = false" >> app/src/main/assets/swv.properties
-          echo "layout.show_toolbar = false" >> app/src/main/assets/swv.properties
-          echo "layout.full_screen = true" >> app/src/main/assets/swv.properties
-          
-          # تحسينات الأداء لتقليل الصفحة البيضاء
-          echo "feature.pull_to_refresh = true" >> app/src/main/assets/swv.properties
-          echo "feature.share_menu = false" >> app/src/main/assets/swv.properties
-          
-          # 2. تحديث اسم التطبيق
-          sed -i 's/<string name="app_name">.*<\/string>/<string name="app_name">${{ github.event.client_payload.app_name }}<\/string>/g' app/src/main/res/values/strings.xml
-
       - name: Grant Execute Permission
         run: chmod +x gradlew
 
@@ -47,5 +26,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.event.client_payload.app_name }}-v1
+          name: Clean-App-Release
           path: app/build/outputs/apk/debug/app-debug.apk
