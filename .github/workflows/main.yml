@@ -18,16 +18,24 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Force Configure App Settings
+      - name: Advanced Cleanup & Configuration
         run: |
-          # 1. إعادة إنشاء ملف الإعدادات بالكامل لضمان حذف بيانات صاحب الريبو
+          # 1. مسح وإعادة بناء ملف الإعدادات لإلغاء ميزات صاحب الريبو تماماً
           echo "app.url = ${{ github.event.client_payload.app_url }}" > app/src/main/assets/swv.properties
           echo "feature.progressbar = true" >> app/src/main/assets/swv.properties
-          echo "feature.zoom = true" >> app/src/main/assets/swv.properties
-          echo "feature.pull_to_refresh = true" >> app/src/main/assets/swv.properties
+          echo "feature.exit_confirmation = true" >> app/src/main/assets/swv.properties
           
-          # 2. تغيير اسم التطبيق في ملف strings.xml
-          # سنستخدم أمر استبدال مباشر وقوي
+          # إيقاف العناصر المزعجة التي ظهرت في صورك
+          echo "layout.drawer = false" >> app/src/main/assets/swv.properties
+          echo "layout.floating_button = false" >> app/src/main/assets/swv.properties
+          echo "layout.show_toolbar = false" >> app/src/main/assets/swv.properties
+          echo "layout.full_screen = true" >> app/src/main/assets/swv.properties
+          
+          # تحسينات الأداء لتقليل الصفحة البيضاء
+          echo "feature.pull_to_refresh = true" >> app/src/main/assets/swv.properties
+          echo "feature.share_menu = false" >> app/src/main/assets/swv.properties
+          
+          # 2. تحديث اسم التطبيق
           sed -i 's/<string name="app_name">.*<\/string>/<string name="app_name">${{ github.event.client_payload.app_name }}<\/string>/g' app/src/main/res/values/strings.xml
 
       - name: Grant Execute Permission
