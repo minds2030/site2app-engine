@@ -18,25 +18,26 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Configure App Settings
+      - name: Force Configure App Settings
         run: |
-          # 1. تغيير رابط الموقع في ملف الإعدادات
-          sed -i 's|app.url = .*|app.url = "${{ github.event.client_payload.app_url }}"|' app/src/main/assets/swv.properties
+          # 1. إعادة إنشاء ملف الإعدادات بالكامل لضمان حذف بيانات صاحب الريبو
+          echo "app.url = ${{ github.event.client_payload.app_url }}" > app/src/main/assets/swv.properties
+          echo "feature.progressbar = true" >> app/src/main/assets/swv.properties
+          echo "feature.zoom = true" >> app/src/main/assets/swv.properties
+          echo "feature.pull_to_refresh = true" >> app/src/main/assets/swv.properties
           
-          # 2. تفعيل شريط التحميل (حل مشكلة الصفحة البيضاء)
-          sed -i 's|feature.progressbar = .*|feature.progressbar = true|' app/src/main/assets/swv.properties
-          
-          # 3. تغيير اسم التطبيق في ملف الأندرويد (Strings)
-          sed -i 's|<string name="app_name">.*</string>|<string name="app_name">${{ github.event.client_payload.app_name }}</string>|' app/src/main/res/values/strings.xml
+          # 2. تغيير اسم التطبيق في ملف strings.xml
+          # سنستخدم أمر استبدال مباشر وقوي
+          sed -i 's/<string name="app_name">.*<\/string>/<string name="app_name">${{ github.event.client_payload.app_name }}<\/string>/g' app/src/main/res/values/strings.xml
 
-      - name: Grant Execute Permission to Gradlew
+      - name: Grant Execute Permission
         run: chmod +x gradlew
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug
 
-      - name: Upload APK Artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.event.client_payload.app_name }}-v1.0
+          name: ${{ github.event.client_payload.app_name }}-v1
           path: app/build/outputs/apk/debug/app-debug.apk
